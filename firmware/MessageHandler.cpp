@@ -1,32 +1,29 @@
 #include "MessageHandler.h"
 #include "SystemState.h"
 
-#define rxPin 3
-#define txPin 4
-
 enum 
 {
+  cmdGetDevInfo,              // Done
+  cmdGetCmds,                 // Done
+  cmdGetRspCodes,             // Done
   cmdSetPixel,                // Done
+  cmdSetPixelPacked,          // Not done
+  cmdClearPixels,             // Done
+  cmdGetNumPixels,            // Done
   cmdSetNumPixels,            // Not done
+
+  // DEV
+  cmdDebug,                   // Done
 };
 
 const int rspSuccess = 1;
 const int rspError = 0;
 
-SoftwareSerial softSerial(rxPin,txPin);
-
-void MessageHandler::initialize()
-{
-  softSerial.begin(9600);
-  dprint.setSerialObj(&softSerial);
-  setSerialObj(&softSerial);
-}
-
 void MessageHandler::processMsg() 
 {
-  while (softSerial.available() > 0) 
+  while (Serial.available() > 0) 
   {
-    process(softSerial.read());
+    process(Serial.read());
     if (messageReady()) 
     {
         msgSwitchYard();
@@ -44,12 +41,41 @@ void MessageHandler::msgSwitchYard()
 
   switch (cmd) 
   {
+    case cmdGetDevInfo:
+      handleGetDevInfo();
+      break;
+
+    case cmdGetCmds:
+      handleGetCmds();
+      break;
+
+    case cmdGetRspCodes:
+      handleGetRspCodes();
+      break;
+
     case cmdSetPixel:
       handleSetPixel();
       break;
 
+    case cmdSetPixelPacked:
+      handleSetPixelPacked();
+      break;
+
+    case cmdClearPixels:
+      handleClearPixels();
+      break;
+
+    case cmdGetNumPixels:
+      handleGetNumPixels();
+      break;
+
     case cmdSetNumPixels:
       handleSetNumPixels();
+      break;
+
+    //DEV
+    case cmdDebug:
+      handleDebug();
       break;
 
     default:
@@ -58,6 +84,35 @@ void MessageHandler::msgSwitchYard()
       break;
     }              
     dprint.stop();
+}
+
+void MessageHandler::handleGetDevInfo() 
+{
+  dprint.addIntItem("status", rspSuccess);
+  dprint.addIntItem("ModelNumber",  constants::deviceModelNumber);
+  dprint.addIntItem("SerialNumber", constants::deviceSerialNumber); 
+}
+
+void MessageHandler::handleGetCmds() 
+{
+  dprint.addIntItem("status", rspSuccess);
+  dprint.addIntItem("getDevInfo", cmdGetDevInfo);
+  dprint.addIntItem("getCmds", cmdGetCmds); 
+  dprint.addIntItem("getRspCodes", cmdGetRspCodes);
+  dprint.addIntItem("setPixel", cmdSetPixel);
+  dprint.addIntItem("setPixelPacked", cmdSetPixelPacked);
+  dprint.addIntItem("clearPixels", cmdClearPixels);
+  dprint.addIntItem("getNumPixels", cmdGetNumPixels);
+
+  // DEV
+  dprint.addIntItem("cmdDebug", cmdDebug);
+}
+
+void MessageHandler::handleGetRspCodes() 
+{
+  dprint.addIntItem("status", rspSuccess);
+  dprint.addIntItem("rspSuccess",rspSuccess);
+  dprint.addIntItem("rspError", rspError);
 }
 
 void MessageHandler::systemCmdRsp(bool flag) 
@@ -85,6 +140,21 @@ void MessageHandler::handleSetPixel()
     systemCmdRsp(systemState.setPixel(i,r,g,b));
 }
 
+void MessageHandler::handleSetPixelPacked() 
+{
+}
+
+void MessageHandler::handleClearPixels() 
+{
+    systemCmdRsp(systemState.clearPixels());
+}
+
+void MessageHandler::handleGetNumPixels() 
+{
+    dprint.addIntItem("numPixels", systemState.getNumPixels());
+    dprint.addIntItem("status", rspSuccess);
+}
+
 void MessageHandler::handleSetNumPixels() 
 {
 }
@@ -98,6 +168,13 @@ bool MessageHandler::checkNumberOfArgs(int num)
         flag = false;
     }
     return flag;
+}
+
+// DEV
+void MessageHandler::handleDebug() 
+{
+  char name[20];
+  dprint.addIntItem("status", rspSuccess);
 }
 
 MessageHandler messageHandler;
