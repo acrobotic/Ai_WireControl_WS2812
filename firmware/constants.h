@@ -2,6 +2,8 @@
 #define _CONSTANTS_H_
 
 namespace constants {
+    extern const unsigned int rxPin;
+    extern const unsigned int txPin;
     extern const unsigned int baudrate;
     extern const unsigned int deviceModelNumber;
     extern const unsigned int deviceSerialNumber; 

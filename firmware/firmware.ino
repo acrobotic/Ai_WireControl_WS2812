@@ -3,11 +3,13 @@
 #include <Adafruit_NeoPixel.h>
 #include "MessageHandler.h"
 #include "SystemState.h"
-#include "constants.h"
+#include <SoftwareSerial.h>
+
+#define __AVR_ATtiny85__
 
 void setup() {
-  Serial.begin(constants::baudrate);
   systemState.initialize();
+  messageHandler.initialize();
 }
 
 void loop() { 
