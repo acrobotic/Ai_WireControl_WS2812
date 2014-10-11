@@ -1,7 +1,7 @@
 #include "constants.h"
 namespace constants {
     // Communications parameters
-    const unsigned int baudrate = 4800;
+    const unsigned int baudrate = 19200;
     const unsigned int deviceModelNumber = 1105;
     const unsigned int deviceSerialNumber = 1267;
     const unsigned int numPixels = 144;
