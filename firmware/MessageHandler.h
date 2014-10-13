@@ -1,7 +1,11 @@
 #ifndef _MESSAGE_HANDER_H_
 #define _MESSAGE_HANDER_H_
 #include <SerialReceiver.h>
-#include <DictPrinter.h>
+#include "SystemState.h"
+#include <SoftwareSerial.h>
+
+#define rxPin 3
+#define txPin 4
 
 class MessageHandler : public SerialReceiver {
 
@@ -10,7 +14,6 @@ class MessageHandler : public SerialReceiver {
     void initialize();
 
   private:
-    DictPrinter dprint;
     void msgSwitchYard();
 
     bool checkNumberOfArgs(int num);
