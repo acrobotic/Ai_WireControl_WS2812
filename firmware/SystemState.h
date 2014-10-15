@@ -1,13 +1,13 @@
 #ifndef _SYSTEM_STATE_H_
 #define _SYSTEM_STATE_H_
-#include "NeoPixel.h"
+#include "Adafruit_NeoPixel.h"
 
 class SystemState {
 
     public:
         SystemState();
         void initialize();
-        NeoPixel blinker;
+        Adafruit_NeoPixel blinker;
         bool setPixel(uint16_t i, uint8_t r, uint8_t g, uint8_t b);
         uint16_t getNumPixels();
 

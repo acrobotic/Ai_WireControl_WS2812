@@ -7,15 +7,18 @@
 
 SystemState::SystemState() : 
     blinker(60,
-            6) 
+            1,NEO_GRB + NEO_KHZ800) 
 {
     _numPixels = 60;
-    _devPin = 6;
+    _devPin = 0;
 }
 
 void SystemState::initialize() 
 {
     blinker.begin();
+    blinker.show();
+    blinker.setPixelColor(5,blinker.Color(0,0,255));
+    blinker.setPixelColor(10,blinker.Color(255,0,255));
     blinker.show();
 }
 

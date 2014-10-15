@@ -9,10 +9,17 @@ enum
 const bool rspSuccess = 1;
 const bool rspError = 0;
 
-SoftwareSerial softSerial(rxPin, txPin);
+//SoftwareSerial softSerial(rxPin, txPin);
+
+void MessageHandler::initialize()
+{
+  //softSerial.begin(9600);
+  //  setSerialObj(softSerial);
+}
 
 void MessageHandler::processMsg() 
 {
+  /*
   while (softSerial.available() > 0) 
   {
     process(softSerial.read());
@@ -22,6 +29,7 @@ void MessageHandler::processMsg()
         reset();
     }   
   }
+  */
   return;
 }
 
@@ -52,13 +60,14 @@ void MessageHandler::msgSwitchYard()
 // TO-DO: validate r, g, b ranges
 void MessageHandler::handleSetPixel() 
 {
-    if (!checkNumberOfArgs(5)) {return;}
-    uint16_t i = readInt(1);
-    uint8_t r = readInt(2);
-    uint8_t g = readInt(3);
-    uint8_t b = readInt(4);
+    //if (!checkNumberOfArgs(5)) {return;}
+    //uint16_t i = readInt(1);
+    //uint8_t r = readInt(2);
+    //uint8_t g = readInt(3);
+    //uint8_t b = readInt(4);
     //systemCmdRsp(systemState.setPixel(i,r,g,b));
-    systemState.setPixel(i,r,g,b);
+    //systemState.setPixel(i,r,g,b);
+    systemState.setPixel(0,255,0,0);
 }
 
 void MessageHandler::handleSetNumPixels() 
