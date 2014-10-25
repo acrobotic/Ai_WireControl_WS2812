@@ -22,16 +22,21 @@ int rxIndex = 0; //Used to index rxString.
 
 //Integer for holding the pwm value received from master.
 int index;
+uint8_t pin = 3;
+uint16_t numPixels = 60;
+int status = 1;
 
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(60, 3, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(numPixels, pin, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel *strip_ptr = &strip;
 
 void requestEvent(){  
-  TinyWireS.send(chrSendData);
+  TinyWireS.send(status);
 }
 
 //Handles receiving i2c data.
 void receiveEvent(uint8_t howMany)
 {
+    status = 1;
     if (TinyWireS.available()){  
       if (howMany < 1)
       {   // Sanity-check
@@ -47,28 +52,52 @@ void receiveEvent(uint8_t howMany)
       {   // This write was only to set the buffer for next read
           return;
       }
+
       while(howMany--)
       {   //Gets i2c data. 
-          rxChrData = TinyWireS.receive();
-          //Places the characters in an array one at a time.
-          rxString[rxIndex] = char(rxChrData);
-          //Increment the data array.
-          rxIndex++;
+        uint16_t idx;
+        uint8_t cmd,r,g,b;
 
-          //If a stop character is read, parse the char array and convert it to a single integer.  
-          if (char(rxChrData) == ']'){
-          //if (1){
-              //This is a low memory form of parsing the char array into an intger
-              //index = int(100*rxString[0]+10*rxString[3]+rxString[4]);
+        if (TinyWireS.receive() == '[')
+        {
+          cmd = TinyWireS.receive();
+          switch(cmd)
+          {
+            case 0:
+              idx = TinyWireS.receive();
+              r = TinyWireS.receive();
+              g = TinyWireS.receive();
+              b = TinyWireS.receive();
+              strip_ptr->setPixelColor(idx,r,g,b);
+              break;
 
-              index = rxString[rxIndex-1];
+            case 1:
+              r = TinyWireS.receive();
+              g = TinyWireS.receive();
+              b = TinyWireS.receive();
+              for(int i=0; i<strip_ptr->numPixels(); i++)
+              {
+                strip_ptr->setPixelColor(i,r,g,b);
+              }
+              break;
 
-              //Resets the char array index.
-              rxIndex = 0;  
+            case 2:
+              for(int i=0; i<strip.numPixels(); i++)
+              {
+                strip_ptr->setPixelColor(i,0,0,0);
+              }
+              break;
 
-              strip.setPixelColor(rxString[0],rxString[1],rxString[2],rxString[3]);
-              strip.show();
-         }
+            default:
+              break;
+          }
+          if (TinyWireS.receive() == ']')
+          {
+            strip.show();
+            status = 0;
+            break;
+          }
+        }
       }
     }
 }
@@ -89,7 +118,4 @@ void loop()
 {
   //Detects a stop sending command.
   TinyWireS_stop_check();
-
-  //Puts the data we got into a variable to send back for error checking.
-  chrSendData = char(rxChrData);
 }
