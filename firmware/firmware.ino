@@ -1,11 +1,9 @@
 #include <Adafruit_NeoPixel.h>
+// Get this from https://github.com/rambo/TinyWire
 #include <TinyWireS.h>
 
 // the 7-bit address (remember to change this when adapting this example)
 #define I2C_SLAVE_ADDRESS 0x4 
-
-// Get this from https://github.com/rambo/TinyWire
-#include <TinyWireS.h>
 
 // The default buffer size, Can't recall the scope of defines right now
 #ifndef TWI_RX_BUFFER_SIZE
