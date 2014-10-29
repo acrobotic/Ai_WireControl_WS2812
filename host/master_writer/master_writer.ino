@@ -1,14 +1,12 @@
-// Wire Master Writer
-// by Nicholas Zambetti <http://www.zambetti.com>
-
-// Demonstrates use of the Wire library
-// Writes data to an I2C/TWI slave device
-// Refer to the "Wire Slave Receiver" example for use with this
-
-// Created 29 March 2006
-
-// This example code is in the public domain.
-
+// Example code for sending control commands via I2C
+// to an ATtiny85 microcontroller pre-programmed
+// to control WS2812/WS2812B LEDs.
+//
+// I2C Connections
+/*
+arduino pin 0 -> SOIC pin 5 (I2C SDA)
+arduino pin 2 -> SOIC pin 7 (I2C SCL)
+*/
 
 #include <Wire.h>
 
